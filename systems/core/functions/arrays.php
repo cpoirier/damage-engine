@@ -14,6 +14,27 @@
 
   require_once __DIR__ . "/trees.php";
 
+  function array_flatten( &$array )
+  {
+    $container = new ArrayFlattenHelper();
+    $callback  = array($container, "append");
+    array_walk_recursive($array, $callback);
+
+    return $container->flattened;
+  }
+
+  class ArrayFlattenHelper
+  {
+    function __construct()
+    {
+      $this->flattened = array();
+    }
+
+    function append( $element, $ignored )
+    {
+      $this->flattened[] = $element;
+    }
+  }
   
   function array_fetch_value( $array, $key, $default = null )
   {

@@ -104,8 +104,8 @@
         static::$system_component_paths[] = $real_path;
       }
     }
-  
-  
+    
+    
     static function get_system_component_paths()
     {
       return static::$system_component_paths;
@@ -499,7 +499,7 @@
         }
       }
   
-      static::set_content_type($content_type);
+      static::set_response_content_type($content_type);
       static::$response = $response;
     }
 
@@ -559,11 +559,11 @@
 
       if( !static::are_headers_sent() )
       {
-        static::add_header("Content-Length", strlen($response_text));    // byte length, not character length
+        static::add_response_header("Content-Length", strlen($response_text));    // byte length, not character length
         static::send_headers();
       }
     
-      static::send_text($context_text);
+      static::send_text($response_text);
       static::$is_response_sent = true;
     }
     
@@ -627,9 +627,9 @@
   
     static function send_headers()
     {
-      header("HTTP/1.0 $this->status");
-      header("Content-Type: " . $this->content_type);
-      foreach( $this->headers as $header )
+      header("HTTP/1.0 " . static::$status);
+      header("Content-Type: " . static::$content_type);
+      foreach( static::$headers as $header )
       {
         header($header);
       }
@@ -676,8 +676,8 @@
 
       debug($text);
 
-      static::accumulate("response_size", strlen($data));    // byte length, not character length
-      print $data;
+      static::accumulate("response_size", strlen($text));    // byte length, not character length
+      print $text;
       flush();
     }
 

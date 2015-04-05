@@ -283,7 +283,7 @@
   }
 
 
-  function Callback_Break extends Exception
+  class Callback_Break extends Exception
   {
   }
 

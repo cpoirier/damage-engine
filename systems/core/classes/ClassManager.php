@@ -94,8 +94,17 @@
     {
       return class_exists($class_name, $autoload = false);
     }
-
-
+    
+    
+    static function get_classes_matching( $pattern )
+    {
+      $callback = Callback::for_function("preg_match", $pattern);
+      $matches  = static::$index->select_matching($callback);
+      
+      return array_keys($matches);
+    }
+    
+    
     static function pick_class()
     {
       $args = func_get_args();

@@ -27,7 +27,7 @@
     if( !Features::enabled("security") or Features::enabled("manual_access") or (!empty($manual_access_password) and Script::get_parameter("o_O") == $manual_access_password) )
     {
       $manual_access_key = "o_O=" . urlencode(Script::get_parameter("o_O"));
-      include __DIR__ . "manual_access.php";
+      include __DIR__ . "/manual_access.php";
     }
   }
 

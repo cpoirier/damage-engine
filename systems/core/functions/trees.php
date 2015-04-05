@@ -31,7 +31,11 @@
   
     foreach( $path as $key )
     {
-      if( is_array($current) )
+      if( is_null($key) )                     // null keys are no-ops
+      {
+        continue;    
+      }
+      elseif( is_array($current) )
       {
         if( @array_key_exists($key, $current) )
         {

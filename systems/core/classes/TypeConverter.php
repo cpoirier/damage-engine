@@ -21,7 +21,7 @@
       {
         if( is_array($exemplar) )
         {
-          is_array($value) or $value = (array)$value;
+          is_array($value) or $value = @(array)$value;
         }
         elseif( is_bool($exemplar) )
         {
@@ -37,16 +37,16 @@
           }
           else
           {
-            $value = (bool)$value;
+            $value = @(bool)$value;
           }
         }
         elseif( is_float($exemplar) )
         {
-          $value = (float)$value;
+          $value = @(float)$value;
         }
         elseif( is_int($exemplar) )
         {
-          $value = (integer)$value;
+          $value = @(integer)$value;
         }
         elseif( is_string($exemplar) && empty($value) )
         {
@@ -54,7 +54,7 @@
         }
         elseif( is_object($exemplar) )
         {
-          $value = (object)$value;
+          $value = @(object)$value;
         }
       }
 
