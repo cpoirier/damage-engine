@@ -25,15 +25,22 @@
         }
         elseif( is_bool($exemplar) )
         {
-          $lower = strtolower($value);
+          if( is_string($value) )
+          {
+            $lower = strtolower($value);
       
-          if( $value === "1" || $value === "true" || $lower === "on" || $lower === "yes" )
-          {
-            $value = true;
-          }
-          elseif( $value === "0" || $value === "false" || $lower === "off" || $lower === "no" )
-          {
-            $value = false;
+            if( $value === "1" || $value === "true" || $lower === "on" || $lower === "yes" )
+            {
+              $value = true;
+            }
+            elseif( $value === "0" || $value === "false" || $lower === "off" || $lower === "no" )
+            {
+              $value = false;
+            }
+            else
+            {
+              $value = @(bool)$value;
+            }
           }
           else
           {

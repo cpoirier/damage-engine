@@ -22,7 +22,7 @@
   
   if( $for )
   {
-    if( ClassLoader::is_loadable($class = "TestsFor_$for") )
+    if( ClassManager::is_loadable($class = "TestsFor_$for") )
     {
       $test_record->run_class_tests($class);
     }

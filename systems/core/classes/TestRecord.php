@@ -51,9 +51,10 @@
     }
     
     
-    function fail()
+    function fail( $data = null )
     {
       $this->passed = false;
+      is_null($data) or $this->data = array($data);
     }
     
     
@@ -75,7 +76,7 @@
         $result->data = array();
         foreach( $this->data as $datum )
         {
-          $result->data[] = ((@strval($datum)) ?: capture_var_dump($datum));
+          $result->data[] = capture_var_dump($datum);
         }
       }
 
@@ -145,12 +146,12 @@
 
             try
             {
-              $result = $method_object->invoke($instance, $method_tester);
+              $result = $method_object->invoke($instance, $method_tester);              
               is_null($result) or $result or $method_tester->fail();
             }
             catch( Exception $e )
             {
-              $method_tester->fail();
+              $method_tester->fail($e);
             }
 
             $class_tester->record($method_name, $method_tester);
@@ -161,7 +162,7 @@
       }
       else
       {
-        $this->record($class, false);
+        $this->record($class, false, "class not found");
       }
     }
     
