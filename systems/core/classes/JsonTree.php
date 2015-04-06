@@ -15,7 +15,7 @@
 
   // A Tree that can be used with the Script response handling to send JSON to the client.
 
-  class JSONTree extends Tree
+  class JsonTree extends Tree
   {    
     function get_content_type()
     {
