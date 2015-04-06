@@ -492,7 +492,7 @@
         }
         elseif( is_string($response) )
         {
-          if( substr($response, 9) != "<!DOCTYPE" and substr($response, 5) != "<html" )
+          if( substr($response, 0, 15) != "<!DOCTYPE html>" )
           {
             $content_type = "text/plain";
           }

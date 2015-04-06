@@ -13,10 +13,12 @@
 
   // Run one or all sets of tests.
 
-  $for         = Script::get_parameter("for"            ,    "");    // If blank, all tests will be run.
-  $flatten     = Script::get_parameter("flatten_results", false);    // If true, flattens the result set into one simple array
+  $for           = Script::get_parameter("for"            ,    "");    // If blank, all tests will be run.
+  $flatten       = Script::get_parameter("flatten_results", false);    // If true, flattens the result set into one simple array
+  $failures_only = Script::get_parameter("failures_only"  , false);    // If true, only failures will be returned
 
   $test_record = new TestRecord("all");
+  $test_record->failures_only = $failures_only;
   
   if( $for )
   {

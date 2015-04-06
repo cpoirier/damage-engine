@@ -1,6 +1,6 @@
 <?php
   
-  class TestsFor_JsonTree
+  class TestsFor_Tree
   {
     function test_simple_set( $tester )
     {

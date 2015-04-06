@@ -15,19 +15,26 @@
 
   class TestRecord
   {
-    function __construct( $name, $passed = true, $data = null )
+    function __construct( $name, $passed = true, $data = null, $failures_only = false )
     {
-      $this->name     = $name;
-      $this->passed   = $passed;
-      $this->data     = $data;
-      $this->subtests = array();
+      $this->name          = $name;
+      $this->passed        = $passed;
+      $this->data          = $data;
+      $this->subtests      = array();
+      $this->failures_only = $failures_only;
     }
+    
     
     
     function record( $name, $passed )         // records a sub test and percolates its result up
     {
       $subtest = is_a($passed, "TestRecord") ? $passed : new static($name, $passed);
-      $this->subtests[] = $subtest;
+      $subtest->failures_only = $this->failures_only;
+      
+      if( !$this->failures_only or !$subtest->passed )
+      {
+        $this->subtests[] = $subtest;
+      }
       
       if( !$subtest->passed )
       {
@@ -125,7 +132,7 @@
     {
       if( class_exists($class) )
       {
-        $class_tester = new static($class);
+        $class_tester = new static($class);  $class_tester->failures_only = $this->failures_only;
         $class_object = new ReflectionClass($class);
         $instance     = new $class();
         
@@ -134,7 +141,7 @@
           $method_name = $method_object->name;
           if( substr($method_name, 0, 5) == "test_" and $method_object->getNumberOfRequiredParameters() == 1 )
           {
-            $method_tester = new static($method_name);
+            $method_tester = new static($method_name); $method_tester->failures_only = $this->failures_only;
 
             try
             {
@@ -206,8 +213,5 @@
       
       return $result;
     }
-  
-  
-  
   
   }
