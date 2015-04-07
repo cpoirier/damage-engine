@@ -63,6 +63,10 @@
         {
           $value = @(object)$value;
         }
+        elseif( is_string($exemplar) )
+        {
+          $value = @(string)$value;
+        }
       }
 
       return $value;
