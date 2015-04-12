@@ -194,7 +194,7 @@
   
     // Log statistics to the error log, if debugging.
 
-    Script::register_handler("beginning_teardown", array("ScriptReporter", "report_to_debug_log"));
+    Script::register_handler("beginning_teardown", array("ScriptReporter", "dump_script_report_to_error_log"));
   }
   else
   {

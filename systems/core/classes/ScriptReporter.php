@@ -106,13 +106,13 @@
 
     static function dump_script_report_to_error_log()
     {
-      error_log(sprintf("%s %s statistics: %s", Script::$script_name, Script::get_id(), implode("  ", Script::format_script_report_as_text(true, 0))));
+      error_log(sprintf("%s %s statistics: %s", Script::get_script_name(), Script::get_id(), implode("  ", static::format_script_report_as_text(true, 0))));
     }
 
 
     static function dump_script_report_to_debug_log()
     {
-      debug(sprintf("%s %s statistics: %s", Script::$script_name, Script::get_id(), implode("  ", Script::format_script_report_as_text(true, 0))));
+      debug(sprintf("%s %s statistics: %s", Script::get_script_name(), Script::get_id(), implode("  ", static::format_script_report_as_text(true, 0))));
     }
   
   }
