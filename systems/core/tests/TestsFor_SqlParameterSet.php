@@ -77,6 +77,9 @@
              "field   in  {list}"
           => "field   in (1, 2, 3)"
       ,   
+             "field   not in  {list}"
+          => "field   not in (1, 2, 3)"
+      ,   
              "field   =   {list}"     
           => "field   in (1, 2, 3)"        
       ,       
@@ -86,6 +89,9 @@
              "field   in  {empty_list}"
           => "field   is null"    
       ,   
+             "field   not in  {empty_list}"
+          => "field   is not null"    
+      ,   
              "field   =   {empty_list}"
           => "field   is null"        
       ,   
@@ -94,12 +100,9 @@
       ,   
              "field   in  {null}"
           => "field   is null"    
-      ,   
-             "field   =   {null}"     
-          => "field   is null"        
-      ,  
-             "field   !=   {null}"     
-          => "field   is not null"        
+      ,
+             "field   not in  {null}"
+          => "field   is not null"    
       );
         
       $this->run_parameter_expansion_tests($tester, $tests, $parameters);
