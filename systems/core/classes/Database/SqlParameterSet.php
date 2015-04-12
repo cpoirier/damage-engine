@@ -24,7 +24,7 @@
     {
       $this->parameters        = $parameters;
       $this->throw_on_missing  = $throw_on_missing;
-      $this->parameter_pattern = $parameter_pattern ?: '/(?P<comparison>(?P<not>\bnot\s+)?(?P<operator>in|like|=|==|!=|<>|<=|>=|>|<)\s+)?{(?P<name>\w+)(?::(?P<type>\w+))?}/';
+      $this->parameter_pattern = $parameter_pattern ?: '/(?P<comparison>(?P<not>\bnot\s+)?(?P<operator>in|like|=|==|!=|<>|<=|>=|>|<)\s+)?{(?P<name>\w+)(?::(?P<type>[^}]+))?}/i';
     }
     
     
@@ -48,8 +48,8 @@
       $name       = tree_fetch($parts, "name"      , "");
       $type       = tree_fetch($parts, "type"      , "");
       $comparison = tree_fetch($parts, "comparison", "");
-      $operator   = tree_fetch($parts, "operator"  , "");
-      $not        = tree_fetch($parts, "not"       , "");
+      $operator   = tree_fetch($parts, "operator"  , "");   $operator = strtolower($operator);
+      $not        = tree_fetch($parts, "not"       , "");   $not      = strtolower($not     );
       $format     = $comparison ? "$comparison%s" : "%s";
       
       empty($name) and abort("your parameter pattern must ensure a parameter name is present", "pattern", $this->parameter_pattern);
@@ -58,17 +58,24 @@
       {
         $value = tree_fetch($this->parameters, $name);
         
-        if( is_null($value) )
+        if( $operator == "like" )
         {
-          return $this->format_null_comparison($operator, !empty($not) || in_array($operator, array("!=", "<>", "<", ">")));
+          return $this->format_like_clause($value, $type, !empty($not));
         }
         elseif( $operator == "in" )
         {
           return $this->format_in_clause($value, $type, !empty($not));
         }
-        elseif( $operator == "like" )
+        elseif( is_null($value) )
         {
-          return sprintf($format, $this->format_like_parameter($value));
+          if( $comparison )
+          {
+            return $this->format_null_comparison($operator, !empty($not) || in_array($operator, array("!=", "<>", "<", ">")));
+          }
+          else
+          {
+            return "null";
+          }
         }
         elseif( is_array($value) )
         {
@@ -160,12 +167,28 @@
     }
 
 
-    function format_like_parameter( $value )
+    function format_like_clause( $value, $type, $not_like = false )
     {
-      $from = array("%"  , "_"  );
-      $to   = array("\\%", "\\_");
+      $comparison = $not_like ? "not like" : "like";
       
-      return str_replace($from, $to, $this->format_string($value));
+      if( is_null($value) )
+      {
+        return $this->format_null_comparison("like", $not_like);
+      }
+      elseif( $type == "like" or substr($type, 0, 5) == "like:" )   // a format string was provided
+      {
+        $format = substr($type, 5) ?: "%s";
+        $from   = array("%"  , "_"  );
+        $to     = array("\\%", "\\_");
+        $string = str_replace($from, $to, $this->format_string($value));
+        
+        return sprintf("$comparison '$format'", $string);
+      }
+      else                                                          // no format string was provided, so use the string verbatim
+      {
+        return sprintf("$comparison %s", $this->format_string_parameter($value));
+      }
+      
     }
   
     
@@ -243,8 +266,8 @@
 
     function format_string( $value )
     {
-      $from = array("\0" , "\'" , "\""  , "\b" , "\n" , "\r" , "\t" , "\\"  );
-      $to   = array("\\0", "\\'", "\\\"", "\\b", "\\n", "\\r", "\\t", "\\\\");
+      $from = array("\\"  , "'"  , "\""  , "\0" , "\b" , "\n" , "\r" , "\t" );
+      $to   = array("\\\\", "\\'", "\\\"", "\\0", "\\b", "\\n", "\\r", "\\t");
       
       return str_replace($from, $to, (string)$value);
     }
