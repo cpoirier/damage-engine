@@ -16,9 +16,22 @@
   
   class SqlStatement
   {
-    function __construct( $query, $parameters = array(), $parameter_set_class = "SqlParameterSet" )
+    static function build( $text, $parameters = array(), $parameter_set_class = "SqlParameterSet" )    // builds a SqlStatement for your use
     {
-      $this->query               = $query;
+      return new static($text, $parameters, $parameter_set_class);
+    }
+    
+    static function compile( $text, $parameters = array(), $parameter_set_class = "SqlParameterSet" )  // builds a SqlStatement and returns the string it compiles to
+    {
+      return static::build($text, $parameters, $parameter_set_class)->to_string();
+    }
+    
+
+
+    
+    function __construct( $text, $parameters = array(), $parameter_set_class = "SqlParameterSet" )
+    {
+      $this->text                = $text;
       $this->parameters          = $parameters;
       $this->parameter_set_class = $parameter_set_class;
     }
@@ -34,9 +47,9 @@
       {
         $parameters = array_merge_keys($this->parameters, $parameters);
         $class      = $this->parameter_set_class;
-        $query      = $class::expand_parameters($query, $parameters);
+        $text      = $class::expand_parameters($this->text, $parameters);
 
-        return $query;
+        return $text;
       }
     }
     

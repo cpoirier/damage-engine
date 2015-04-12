@@ -29,6 +29,7 @@
     
     
     
+    
   //===============================================================================================
   // SECTION: Parameter expansion
   
@@ -41,7 +42,6 @@
       
       return $query;
     }
-    
     
     function expand_parameter( $parts )     // Used by expand_parameters (via preg_replace_callback) to expand a single parameter into a query string
     {
@@ -98,6 +98,7 @@
         }
       }
     }
+
     
     
     
