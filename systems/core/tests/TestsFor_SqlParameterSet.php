@@ -113,6 +113,10 @@
      
      
      
+  //===============================================================================================
+  // SECTION: Internals
+  
+     
     function run_parameter_expansion_tests( $tester, $tests, $parameters )
     {
       foreach( $tests as $given => $expect )
