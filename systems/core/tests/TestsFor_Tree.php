@@ -15,9 +15,9 @@
       $tree = new JsonTree();
       $tree->set("x/y/z", 20);
       
-      $tester->record("x is an array"  , is_array($tree->get("x")));
-      $tester->record("x/y is an array", is_array($tree->get("x/y")));
       $tester->record("x/y/z is 20"    , $tree->get("x/y/z") == 20);
+      $tester->record("x/y is an array", is_array($tree->get("x/y")));
+      $tester->record("x is an array"  , is_array($tree->get("x")));
     }
     
     
@@ -27,9 +27,9 @@
       $tree->push_root("subtree");
       $tree->set("x/value", "something");
 
-      $tester->record("x/value is correct"         , $tree->get("x/value", "")          == "something");
-      $tester->record("/x/value is null"           , $tree->get("/x/value")             == null       );
-      $tester->record("/subtree/x/value is correct", $tree->get("/subtree/x/value", "") == "something");      
+      $tester->record("x/value in /subtree is correct", $tree->get("x/value", "")          == "something");
+      $tester->record("/x/value is null"              , $tree->get("/x/value")             == null       );
+      $tester->record("/subtree/x/value is correct"   , $tree->get("/subtree/x/value", "") == "something");      
     }
     
     
@@ -58,9 +58,9 @@
       $tree = new JsonTree();
       $tree->set("x/11/y", 19);
       
-      $tester->record("x is an array"    , is_array($tree->get("/x")));
-      $tester->record("x/11 is an array" , is_array($tree->get("/x/11")));
       $tester->record("x/11/y is correct", $tree->get("/x/11/y", 0) == 19);
+      $tester->record("x/11 is an array" , is_array($tree->get("/x/11")));
+      $tester->record("x is an array"    , is_array($tree->get("/x")));
     }
     
 
