@@ -94,13 +94,19 @@
   //===============================================================================================
   // SECTION: Converters
   
-    function as_exists()
+    function get_first()
     {
-      $this->rewind();
-      return $this->valid();
+      $first = null;
+      foreach( $this as $row )
+      {
+        $first = $row;
+        break;
+      }
+      
+      return $first;
     }
-
-    function as_value( $field, $default = null )
+  
+    function get_first_value( $field, $default = null )
     {
       $value = $default;
       foreach( $this as $row )
@@ -111,6 +117,14 @@
 
       return $value;
     }
+
+
+    function has_results()
+    {
+      $this->rewind();
+      return $this->valid();
+    }
+
     
     
     function as_list( $fields = null )

@@ -14,15 +14,25 @@
 
   
   
-  class MySQLiConnection
+  class MySqliConnection
   {
     protected $handle;
     
-    function __construct( $handle )
+    function __construct( $handle, $connector, $name, $statistics_collector = null )
     {
-      $this->handle     = $handle;
+      $this->handle               = $handle;
+      $this->connector            = $connector;
+      $this->name                 = $name;
+      $this->statistics_collector = $statistics_collector;
+
       $this->statements = array();
     }
+        
+    function __destruct()
+    {
+      $this->close();
+    }
+
     
     
 
@@ -31,7 +41,7 @@
   
     function query( $query /* parameters... */ )
     {
-      return new MySQLiResultSet($this->get_statement())
+      return new MySQLiResultsSet($this->get_statement());
     }
     
     function query_map( $key_fields, $value_fields, $query /* parameters...*/ )
@@ -52,7 +62,7 @@
     
     function get_statement( $query )
     {
-      $statement = tree_fetch($query);
+      $statement = tree_fetch($this->statements, $query);
       if( !$statement and $statement = $this->handle->prepare($query) )
       {
         $this->statements[$query] = $statement;
@@ -75,17 +85,12 @@
     }
     
     
-
-
+    
+    
   //===============================================================================================
   // SECTION: Cleanup
     
     
-    function __destruct()
-    {
-      $this->close();
-    }
-
     function close()
     {
       if( $this->handle )

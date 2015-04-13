@@ -38,7 +38,7 @@
       
       if( is_null($subtest->passed) )
       {
-        $this->passed and $this->skip();
+        $this->passed and $this->skip();    // ensure failures still propagate up, even if there are skipped tests
       }
       elseif( $subtest->passed === false )
       {
