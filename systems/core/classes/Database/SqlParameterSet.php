@@ -158,7 +158,7 @@
         }
       }
       
-      abort("should be unreachable");
+      abort("should not be unreachable");
     }
     
     
