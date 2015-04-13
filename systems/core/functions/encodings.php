@@ -1,4 +1,4 @@
-<?php if (defined($inc = "TYPE_CONVERSION_INCLUDED")) { return; } else { define($inc, true); }
+<?php if (defined($inc = "CORE_TYPE_CONVERSION_INCLUDED")) { return; } else { define($inc, true); }
 
   // Damage Engine Copyright 2012-2015 Massive Damage, Inc.
   //

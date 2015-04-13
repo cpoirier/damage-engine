@@ -13,18 +13,21 @@
 
   // Run one or all sets of tests.
 
-  $for           = Script::get_parameter("for"            , ""         );    // If blank, all tests will be run.
-  $flatten       = Script::get_parameter("flatten_results", false      );    // If true, flattens the result set into one simple array
-  $failures_only = Script::get_parameter("failures_only"  , empty($for));    // If true, only failures will be returned; defaults to true if no specific tests are specified
+  $for               = Script::get_parameter("for"              , ""         );    // If blank, all tests will be run.
+  $flatten           = Script::get_parameter("flatten_results"  , false      );    // If true, flattens the result set into one simple array
+  $failures_only     = Script::get_parameter("failures_only"    , empty($for));    // If true, only failures will be returned; defaults to true if no specific tests are specified
+  $configuration_nvp = Script::get_parameter("configuration_nvp", ""         );    // Configuration name-value pairs for tests that require it
 
   $test_record = new TestRecord("all");
   $test_record->failures_only = $failures_only;
+  
+  $configuration = TypeConverter::decode($configuration_nvp, "nvp");
   
   if( $for )
   {
     if( ClassManager::is_loadable($class = "TestsFor_$for") )
     {
-      $test_record->run_class_tests($class);
+      $test_record->run_class_tests($class, $configuration);
     }
     else
     {
@@ -33,7 +36,7 @@
   }
   else
   {
-    $test_record->run_all_tests();
+    $test_record->run_all_tests($configuration);
   }
   
   Script::set_response($test_record->to_string($flatten), "application/json");

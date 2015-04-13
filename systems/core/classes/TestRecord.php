@@ -36,7 +36,11 @@
         $this->subtests[] = $subtest;
       }
       
-      if( !$subtest->passed )
+      if( is_null($subtest->passed) )
+      {
+        $this->passed and $this->skip();
+      }
+      elseif( $subtest->passed === false )
       {
         if( func_num_args() > 2 )
         {
@@ -48,6 +52,14 @@
       }
       
       return $passed;
+    }
+    
+    
+    function skip( $reason = null )
+    {
+      $this->passed = null;
+      is_null($reason) or $this->data = array($reason);
+      return false;
     }
     
     
@@ -121,43 +133,61 @@
   //===============================================================================================
   // SECTION: Test execution
   
-    function run_all_tests()
+    function run_all_tests( $configuration )
     {
       foreach( ClassManager::get_classes_matching("/^TestsFor_/") as $class_name )
       {
-        $this->run_class_tests($class_name);
+        $this->run_class_tests($class_name, $configuration);
       }
     }
   
-    function run_class_tests( $class )
+    function run_class_tests( $class, $configuration )
     {
       if( class_exists($class) )
       {
         $class_tester = new static($class);  $class_tester->failures_only = $this->failures_only;
         $class_object = new ReflectionClass($class);
         $instance     = new $class();
+        $configured   = true;
         
-        foreach( $class_object->getMethods(ReflectionMethod::IS_PUBLIC) as $method_object )
+        if( $class_object->hasMethod("configure") )
         {
-          $method_name = $method_object->name;
-          if( substr($method_name, 0, 5) == "test_" and $method_object->getNumberOfRequiredParameters() == 1 )
+          $configured = false;
+          
+          try
           {
-            $method_tester = new static($method_name); $method_tester->failures_only = $this->failures_only;
-
-            try
-            {
-              $result = $method_object->invoke($instance, $method_tester);              
-              is_null($result) or $result or $method_tester->fail();
-            }
-            catch( Exception $e )
-            {
-              $method_tester->fail($e);
-            }
-
-            $class_tester->record($method_name, $method_tester);
+            $configured = $instance->configure($configuration, $class_tester);
+          }
+          catch( Exception $e )
+          {
+            $class_tester->skip($e);
           }
         }
+        
+        if( $configured )
+        {
+          foreach( $class_object->getMethods(ReflectionMethod::IS_PUBLIC) as $method_object )
+          {
+            $method_name = $method_object->name;
+            if( substr($method_name, 0, 5) == "test_" and $method_object->getNumberOfRequiredParameters() == 1 )
+            {
+              $method_tester = new static($method_name); $method_tester->failures_only = $this->failures_only;
 
+              try
+              {
+                $result = $method_object->invoke($instance, $method_tester);              
+                is_null($result) or $result or $method_tester->fail();
+              }
+              catch( Exception $e )
+              {
+                $method_tester->fail($e);
+              }
+
+              $class_tester->record($method_name, $method_tester);
+            }
+          }
+        }
+        
         $this->record($class, $class_tester);
       }
       else

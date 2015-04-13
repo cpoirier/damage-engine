@@ -81,7 +81,7 @@
     static function encode( $value, $encoding, $default = null )    // encodes the $value with the named $encoding
     {
       $encoded = $default;
-      if( $encoding = $this->get_encoding_or_signal($encoding) )
+      if( $encoding = static::get_encoding_or_signal($encoding) )
       {
         $encoded = Callback::do_call_with_array($encoding->encoder, array($value));
       }
@@ -93,7 +93,7 @@
     static function decode( $value, $encoding, $default = null )    // decodes the $value with the named $encoding
     {
       $decoded = $default;
-      if( $encoding = $this->get_encoding_or_signal($encoding) )
+      if( $encoding = static::get_encoding_or_signal($encoding) )
       {
         $decoded = Callback::do_call_with_array($encoding->decoder, array($value));
       }
@@ -143,4 +143,7 @@
   
   
   TypeConverter::initialize();
+  TypeConverter::register_encoding("csv"         , "csv_encode", "csv_decode");
+  TypeConverter::register_encoding("nvp"         , "nvp_encode", "nvp_decode");
+  TypeConverter::register_encoding("query_string", "qs_encode" , "qs_decode" );
   

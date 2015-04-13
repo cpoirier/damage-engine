@@ -52,6 +52,7 @@
   require_once __DIR__ . "/../functions/trees.php"      ;
   require_once __DIR__ . "/../functions/orderings.php"  ;
   require_once __DIR__ . "/../functions/ranges.php"     ;
+  require_once __DIR__ . "/../functions/encodings.php"  ;
 
   require_once __DIR__ . "/../classes/DeferredCall.php" ;
   require_once __DIR__ . "/../classes/Features.php"     ;
