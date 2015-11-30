@@ -18,13 +18,11 @@
   {
     protected $handle;
     
-    function __construct( $handle, $connector, $name, $statistics_collector = null )
+    function __construct( $handle, $connector, $name )
     {
-      $this->handle               = $handle;
-      $this->connector            = $connector;
-      $this->name                 = $name;
-      $this->statistics_collector = $statistics_collector;
-
+      $this->handle     = $handle;
+      $this->connector  = $connector;
+      $this->name       = $name;
       $this->statements = array();
     }
         
@@ -44,14 +42,11 @@
       return new MySQLiResultsSet($this->get_statement());
     }
     
-    function query_map( $key_fields, $value_fields, $query /* parameters...*/ )
+    function execute( $statement /* parameters... */ )
     {
-      if( $result = $this->query() )
-      {
-        
-      }
+      return 
     }
-
+    
 
 
 
@@ -76,12 +71,19 @@
     
     function fail( $reason, $query = null )
     {
-      $errno     = $this->handle->errno;
-      $error     = $this->handle->error;
-      $base      = $query ? new MySQLiQueryError($reason, $query, $errno, $error) : new MySQLiRuntimeError($reason, $errno, $error);
-      $exception = Script::filter("handle_fail_exception", $base, $reason, $query) ?: $base;
+      $details = array();
+      $details["reason"     ] = $reason;
+      $details["errno"      ] = $this->handle->errno;
+      $details["description"] = $this->handle->error;
       
-      throw $exception;
+      if( $query )
+      {
+        Script::throw_exception("mysqli_query_error", "query", $query, $details);
+      }
+      else
+      {
+        Script::throw_exception("mysqli_runtime_error", $details);
+      }
     }
     
     

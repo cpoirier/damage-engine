@@ -14,7 +14,7 @@
   // the License.
 
   
-  class MySqliResultsSet extends ResultsSet
+  class MysqliResultSet extends SqlResultSet
   {
     protected $handle;
     
@@ -82,20 +82,24 @@
       $this->fetch();
     }
     
+    
     function current() 
     {
       return $this->current;
     }
   
+  
     function key()
     {
       return $this->position;
     }
+  
     
     function next()
     {
       $this->fetch();
     }
+  
     
     function valid()
     {

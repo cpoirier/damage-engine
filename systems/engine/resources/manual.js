@@ -200,45 +200,20 @@ Formatter.prototype.process = function()
         var numbers  = details[1];
         var table    = $("<table class='grid'/>").appendTo(into);
         var thead    = $("<thead/>").appendTo(table);
-        var trh      = $("<tr/>"   ).appendTo(thead);
-
-        var numeric_array = true;
-        var last_key = -1;
-        for( var i in object )
-        {
-          var converted = parseFloat(i);
-          if( isNaN(converted) || i != last_key + 1 )
-          {
-            numeric_array = false;
-            break;
-          }
-          
-          last_key = converted;
-        }
-        
-        if( !numeric_array )
-        {
-          $("<th/>").appendTo(trh);
-        }
-
+        var trh      = $("<tr><th></th></tr>"   ).appendTo(thead);
         for( var i in headings )
         {
           var th = $("<th/>").appendTo(trh);
           th.append(headings[i]);
         }
-
-        var tbody = $("<tbody/>").appendTo(table);
         
+        var tbody = $("<tbody/>").appendTo(table);
         for( var i in object )
         {
           var el = object[i];
           var tr = $("<tr/>").appendTo(tbody);
-
-          if( !numeric_array )
-          {
-            var tdk = $("<td/>").appendTo(tr);   // tdk.addClass("numeric"); ?
-            tdk.append(i);
-          }
+          var ti = $("<th/>").appendTo(tr);
+          ti.append(i);
           
           for( var j in el )
           {

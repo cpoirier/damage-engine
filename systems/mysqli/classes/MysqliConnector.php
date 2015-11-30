@@ -13,13 +13,15 @@
   // the License.
 
   
-  class MySqliConnector
+  class MysqliConnector
   {
-    public  $masters;
-    public  $slaves;
-    public  $user;
-    public  $database;
-    private $password;
+    public    $masters;
+    public    $slaves;
+    public    $user;
+    public    $database;
+    protected $schema_name;
+    private   $password;
+    
 
     private static $connectors;
 
@@ -57,8 +59,9 @@
           $db        = $details["db"  ];
           $masters   = array_unique(array_merge(array_fetch_value($details, "masters", array()), array_fetch_value($details, "master", array())));
           $slaves    = array_unique(array_merge(array_fetch_value($details, "slaves" , array()), array_fetch_value($details, "slave" , array())));
+          $name      = array_fetch_value($details, "name", null);
 
-          static::$connectors[$descriptor] = new static($masters, $slaves, $user, $pass, $db);
+          static::$connectors[$descriptor] = new static($masters, $slaves, $user, $pass, $db, $name);
         }
       }
 
@@ -80,13 +83,19 @@
 
     function __construct( $masters, $slaves, $user, $password, $database )
     {
-      $this->masters  = $masters;
-      $this->slaves   = $slaves;
-      $this->user     = $user;
-      $this->password = $password;
-      $this->database = $database;
+      $this->masters     = $masters;
+      $this->slaves      = $slaves;
+      $this->user        = $user;
+      $this->password    = $password;
+      $this->database    = $database;
+      $this->schema_name = sprintf("mysqli:%s:%s", implode(",", $this->masters), $this->database);
     }
-
+    
+    function get_schema_name()
+    {
+      return $this->schema_name;
+    }
+    
     function connect_for_writing( $statistics_collector = null, $throw_on_failure = null )
     {
       return $this->connect($statistics_collector, $for_writing = true, $throw_on_failure);
@@ -135,7 +144,7 @@
             
             if( $okay )
             {
-              return new MySqliConnection($handle, $this, $server, $statistics_collector);
+              return new MysqliConnection($handle, $this);
             }
             else
             {
@@ -153,7 +162,7 @@
       is_null($throw_on_failure) and $throw_on_failure = error_reporting() & E_USER_ERROR;
       if( $throw_on_failure and $last_error and $last_error->errno )
       {
-        throw new MySqliConnectionError($db, $last_error->errno, $last_error->error);
+        Script::throw_exception("mysqli_connection_error", "errno", $last_error->error, "description", $last_error->error);
       }
 
       return null;

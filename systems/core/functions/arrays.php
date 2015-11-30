@@ -68,21 +68,33 @@
     }
   }
   
-
-  function array_fetch_first( $array, $default = null )    // Returns the first value of the array (even in assoc arrays)
+  
+  function array_fetch_first_key( $array )
   {
-    $first = $default;
+    $key = null;
     
     if( is_array($array) and !empty($array) )
     {
       reset($array);
-      $key   = key($array);
+      $key = key($array);
+    }
+    
+    return $key;
+  }
+  
+
+  function array_fetch_first( $array, $default = null )    // Returns the first value of the array (even in assoc arrays)
+  {
+    $first = $default;
+    $key   = array_fetch_first_key($array);
+    
+    if( $key != null )
+    {
       $first = $array[$key];
     }
     
     return TypeConverter::coerce_type($first, $default);
   }
-  
   
   
   function array_fetch_property( $array, $property, $keep_keys = true )   // Given an array of objects, returns the values of a property on each
@@ -168,15 +180,20 @@
     while( !empty($array) )
     {
       if( count($array) == 1 and array_key_exists(0, $array) and (is_null($array[0]) or is_array($array[0]) or is_object($array[0])) )
-      {
+      {                                                                                            // handle array(array("a" => "b"))
         $tail  = array_shift($array);
         $pairs = array_merge(is_object($tail) ? get_object_vars($tail) : (array)$tail, $pairs);
       }
-      else
+      else if( is_string(array_fetch_first_key($array)) )                                          // handle array("a" => "b")
+      {
+        $pairs = array_merge($array, $pairs);
+        $array = array();
+      }
+      else                                                                                         // handle array("a", "b")
       {
         $key   = array_shift($array);
         $value = @array_shift($array);
-
+        
         $pairs[(string)$key] = $value;
       }
     }

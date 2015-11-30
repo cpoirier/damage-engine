@@ -67,6 +67,23 @@
       header("HTTP/1.0 500 Service failed");
       abort($message);
     }
+    
+    static function throw_exception()   // See ScriptException::build for parameter details
+    {
+      $exception = ScriptException::build(func_get_args());
+      $filters   = array(sprintf("%s_exception", $exception->identifier), "exception");
+      $final     = static::filter($filters, $exception, $exception);
+      
+      if( $final && is_object($final) && is_a($final, "Exception") )
+      {
+        $exception = $final;
+      }
+      
+      throw $exception;
+    }
+
+
+
 
 
 
@@ -960,8 +977,8 @@
       
   
   
-  
-  
+
+
 //=================================================================================================
 // FILTERS AND SIGNALLING
 //=================================================================================================

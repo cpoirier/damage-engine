@@ -266,9 +266,10 @@
      
     function run_parameter_expansion_tests( $tester, $tests, $parameters )
     {
+      $connection = new SqlDatabaseConnection(null);
       foreach( $tests as $given => $expect )
       {
-        $expanded    = SqlParameterSet::expand_parameters($given, $parameters);
+        $expanded    = SqlParameterSet::process($given, $parameters, $connection);
         $description = sprintf("%s BECOMES %s", $given, $expect);
         $tester->record($description, $expanded == $expect, $expanded);
       }

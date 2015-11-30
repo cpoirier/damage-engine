@@ -1,4 +1,4 @@
-<?php if (defined($inc = "CORE_RESULTSSET_INCLUDED")) { return; } else { define($inc, true); }
+<?php if (defined($inc = "CORE_SQLRESULTSSET_INCLUDED")) { return; } else { define($inc, true); }
 
   // Damage Engine Copyright 2012-2015 Massive Damage, Inc.
   // Based on work Copyright 2011 1889 Labs
@@ -16,7 +16,7 @@
   
   // An abstract base class for things that return result records from a database.
   
-  class ResultsSet implements Iterator
+  class SqlResultSet implements Iterator
   {
     function __construct()
     {
@@ -147,11 +147,13 @@
       
       $key_depth > 10 and abort("to_map_max_key_depth_is_10");
       
-      @list($k0, $k1, $k2, $k3, $k4, $k5, $k6, $k7, $k8, $k9) = $key_fields;
-      
       foreach( $this as $row )
       {
-        $value = $this->project($row, $fields);
+        $keys  = array_values(get_object_vars($this->project($row, $key_fields)));
+        $value = $this->project($row, $value_fields);
+
+        @list($k0, $k1, $k2, $k3, $k4, $k5, $k6, $k7, $k8, $k9) = $keys;
+      
         switch( $key_depth )
         {
           case  1: @$map[$k0]                                              = $value; break;
@@ -384,24 +386,25 @@
   
     function project( $row, $fields = null )
     {
-      if( is_null($fields) )
+      if( is_null($fields) or $fields == "*" )
       {
         return $row;
       }
       elseif( is_scalar($fields) )
       {
-        return $row->$fields;
+        $field = $fields;
+        return isset($row->$field) ? $row->$field : null;
       }
       else
       {
         $p = (object)null;
         foreach( $fields as $field )
         {
-          $p->$field = $row->$field;
+          $p->$field = isset($row->$field) ? $row->$field : null;
         }
       
         return $p;
       }
     }
-   
+    
   }

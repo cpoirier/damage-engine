@@ -50,9 +50,6 @@
   require_once __DIR__ . "/../functions/debugging.php"  ;
   require_once __DIR__ . "/../functions/arrays.php"     ;
   require_once __DIR__ . "/../functions/trees.php"      ;
-  require_once __DIR__ . "/../functions/orderings.php"  ;
-  require_once __DIR__ . "/../functions/ranges.php"     ;
-  require_once __DIR__ . "/../functions/encodings.php"  ;
 
   require_once __DIR__ . "/../classes/DeferredCall.php" ;
   require_once __DIR__ . "/../classes/Features.php"     ;
@@ -62,6 +59,8 @@
   require_once __DIR__ . "/../classes/PathManager.php"  ;
   require_once __DIR__ . "/../classes/Cache/Cache.php"  ;
   require_once __DIR__ . "/../classes/Logger.php"       ;
+
+  require_once __DIR__ . "/../functions/encodings.php"  ;
   
 
   // Configure features.

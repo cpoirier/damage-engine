@@ -39,6 +39,8 @@
     return $string;
   }
   
+  TypeConverter::register_encoding("csv", "csv_encode", "csv_decode");
+  
   
   
   
@@ -83,6 +85,8 @@
     return implode(" ", $list) . (empty($list) ? "" : " ");
   }
   
+  TypeConverter::register_encoding("nvp", "nvp_encode", "nvp_decode");
+  
   
   
   
@@ -120,4 +124,6 @@
   }
   
   
+  TypeConverter::register_encoding("query_string", "qs_encode" , "qs_decode" );
+  TypeConverter::register_encoding("qs"          , "qs_encode" , "qs_decode" );
   
