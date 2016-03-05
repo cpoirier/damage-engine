@@ -69,8 +69,8 @@
 
     function is_reportable()
     {
-      $game = Script::fetch("game");
-      return $game->has_translation($this->identifier);
+      $game = Script::fetch("game", null);
+      return $game ? $game->has_translation($this->identifier) : false;
     }
   
   
@@ -97,7 +97,7 @@
       //
       // Return the exception (we don't throw it).
 
-      return new EngineException($identifier, $data, $level, $previous);
+      return new static($identifier, $data, $level, $previous);
     }
   }
 

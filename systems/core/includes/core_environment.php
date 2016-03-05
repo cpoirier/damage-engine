@@ -114,7 +114,7 @@
   {
     Script::signal("dying_from_uncaught_exception", $exception);
     Script::signal("killed_by_uncaught_exception", $exception, $dump = format_exception_data($exception, sprintf("ERROR in %s: ", Script::get_script_name())));
-
+    
     error_log(Script::get_script_name() . " DIED FROM UNCAUGHT EXCEPTION: " . $exception->getMessage() . "\n" . capture_var_dump($exception) . "\n" . capture_trace());
     exit;
   }

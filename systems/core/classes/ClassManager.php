@@ -224,7 +224,7 @@
           if( static::is_loadable($name) )
           {
             Script::safe_require_once(static::$index->get_path_to_class($name));
-            static::is_loaded($full_class_name) or Script::fail("class_not_present_in_class_file", "class_name", $full_class_name);
+            static::is_loaded($full_class_name) or Script::fail("class_not_present_in_class_file", array("class_name" => $full_class_name));
             return true;
           }
         }
