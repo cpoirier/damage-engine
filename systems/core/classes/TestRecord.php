@@ -143,7 +143,7 @@
   
     function run_class_tests( $class, $configuration )
     {
-      if( class_exists($class) )
+      if( ClassManager::is_loadable($class) )
       {
         $class_tester = new static($class);  $class_tester->failures_only = $this->failures_only;
         $class_object = new ReflectionClass($class);

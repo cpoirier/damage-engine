@@ -208,4 +208,15 @@
   }
   
   
+  function array_unpack( $array )
+  {
+    if( count($array) == 1 and array_key_exists(0, $array) )
+    {
+      return array_unpack($array[0]);
+    }
+    
+    return $array;
+  }
+  
+  
   

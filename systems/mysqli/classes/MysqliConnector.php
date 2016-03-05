@@ -51,17 +51,16 @@
         {
           parse_str($descriptor, $details);
         }
-        
+
         if( !empty($details) )
         {
-          $user      = $details["user"];
-          $pass      = $details["pass"];
-          $db        = $details["db"  ];
-          $masters   = array_unique(array_merge(array_fetch_value($details, "masters", array()), array_fetch_value($details, "master", array())));
-          $slaves    = array_unique(array_merge(array_fetch_value($details, "slaves" , array()), array_fetch_value($details, "slave" , array())));
-          $name      = array_fetch_value($details, "name", null);
+          $user      = array_fetch_value($details, "user");
+          $pass      = array_fetch_value($details, "pass");
+          $db        = array_fetch_value($details, "db"  );
+          $masters   = array_unique(array_filter(array_merge(array_fetch_value($details, "masters", array()), array(array_fetch_value($details, "master")))));
+          $slaves    = array_unique(array_filter(array_merge(array_fetch_value($details, "slaves" , array()), array(array_fetch_value($details, "slave" )))));
 
-          static::$connectors[$descriptor] = new static($masters, $slaves, $user, $pass, $db, $name);
+          static::$connectors[$descriptor] = new static($masters, $slaves, $user, $pass, $db);
         }
       }
 
@@ -89,6 +88,7 @@
       $this->password    = $password;
       $this->database    = $database;
       $this->schema_name = sprintf("mysqli:%s:%s", implode(",", $this->masters), $this->database);
+      $this->last_error  = null;
     }
     
     function get_schema_name()
@@ -115,8 +115,8 @@
       $error      = null;
       $utc_offset = date('P');
       $utc_setter = sprintf("set time_zone = '%s'", $utc_offset);
-      $last_error = null;
 
+      $this->last_error = null;
       if( !empty($servers) )
       {
         shuffle($servers);
@@ -144,7 +144,7 @@
             
             if( $okay )
             {
-              return new MysqliConnection($handle, $this);
+              return new MysqliConnection($handle, $this, $this->schema_name);
             }
             else
             {
@@ -154,18 +154,28 @@
           }
           elseif( $errno = mysqli_connect_errno() )
           {
-            $last_error = (object)array("errno" => $errno, "error" => @mysqli_connect_error());
+            $this->last_error = (object)array("errno" => $errno, "error" => @mysqli_connect_error());
           }
         }
       }
+      else
+      {
+        $this->last_error = (object)array("errno" => -1, "error" => "no servers provided in configuration");
+      }
 
       is_null($throw_on_failure) and $throw_on_failure = error_reporting() & E_USER_ERROR;
-      if( $throw_on_failure and $last_error and $last_error->errno )
+      if( $throw_on_failure and $this->last_error and $this->last_error->errno )
       {
-        Script::throw_exception("mysqli_connection_error", "errno", $last_error->error, "description", $last_error->error);
+        Script::throw_exception("mysqli_connection_error", "errno", $this->last_error->error, "description", $this->last_error->error);
       }
 
       return null;
+    }
+    
+    
+    function get_connection_error()
+    {
+      return $this->last_error;
     }
     
     

@@ -39,12 +39,12 @@
   
     function query( $query /* parameters... */ )
     {
-      return new MySqliResultsSet($this->get_statement());
+      return new MysqliResultsSet($this->get_statement());
     }
     
     function execute( $statement /* parameters... */ )
     {
-      return 
+      // return ;
     }
     
 
