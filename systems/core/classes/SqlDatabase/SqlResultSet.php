@@ -20,8 +20,8 @@
   {
     function __construct()
     {
-      $this->filters           = array("query_result");
-      $this->structure_filters = array();
+      $this->filters      = array("query_result");
+      $this->tree_filters = array();
     }
     
     function __destruct()
@@ -83,9 +83,9 @@
       $this->filters[] = $filter;
     }
   
-    function add_structure_filter( $filter )
+    function add_tree_filter( $filter )
     {
-      $this->structure_filters[] = $filter;
+      $this->tree_filters[] = $filter;
     }
   
   
@@ -372,7 +372,7 @@
       $finished = array();
       foreach( $top as $key => $object )
       {
-        $finished[$key] = Script::filter($this->structure_filters, $object, $key, $this);
+        $finished[$key] = Script::filter($this->tree_filters, $object, $key, $this);
       }
 
       return $finished;

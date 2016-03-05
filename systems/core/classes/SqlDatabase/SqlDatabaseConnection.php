@@ -47,22 +47,28 @@
       abort("override this to return the time_t the database schema was last changed");
     }
         
-    function rollback()
+    protected function rollback()
     {
       abort("override this to rollback the current transaction");
     }
     
-    function commit()
+    protected function commit()
     {
       abort("override this to commit the current transaction (and automatically start the next)");
     }
     
     
-    
-    
-    
+        
   //===============================================================================================
-  // SECTION: Convenience routines
+  // SECTION: Transaction management
+  
+    
+  
+  
+  
+  
+  //===============================================================================================
+  // SECTION: Convenience query routines
   
     
     function query_first( $query /* parameters */ )
@@ -126,6 +132,17 @@
       
       return $results->as_tree($program);
     }
+    
+    
+    
+  //===============================================================================================
+  // SECTION: Convenience update routines
+  
+    
+  
+  
+  
+  
     
     
     
