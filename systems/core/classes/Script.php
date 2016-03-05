@@ -518,6 +518,8 @@
   
       static::set_response_content_type($content_type);
       static::$response = $response;
+      
+      return $response;
     }
 
 

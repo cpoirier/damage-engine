@@ -13,6 +13,7 @@
   // the License.
 
   require_once "get_script_parameter_descriptors.php";
+  require_once "http.php";
   require_once "html.php";
 
   Script::set("execution_tag", "o_O");
