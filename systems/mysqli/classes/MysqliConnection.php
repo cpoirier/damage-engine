@@ -39,7 +39,7 @@
   
     function query( $query /* parameters... */ )
     {
-      return new MySQLiResultsSet($this->get_statement());
+      return new MySqliResultsSet($this->get_statement());
     }
     
     function execute( $statement /* parameters... */ )
