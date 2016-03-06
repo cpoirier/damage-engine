@@ -42,6 +42,10 @@
             {
               return $entry->value;
             }
+            else
+            {
+              $this->delete($key);    // It's expired
+            }
           }
         }
       }
@@ -63,25 +67,8 @@
 
     function add( $key, $value, $expiry_s = 0 )
     {
-      $path       = $this->make_path($key);
-      $entry      = new FileSystemBackedCache_Entry($value, $expiry_s);
-      $serialized = serialize($entry);
-      
-      if( $file = @fopen($path, "x") )
-      {
-        $length = strlen($serialized);
-        if( $length == @fwrite($file, $serialized, $length) )
-        {
-          fclose($file);
-          return true;
-        }
-        else
-        {
-          @unlink($path);   // RACE CONDITION: strictly, somebody else might have updated between fclose() and unlink(), but we can't very well leave it anyway
-        }
-      }
-
-      return false;
+      warn("FileSystemBackedCache does not support add(), due to intolerable race conditions");
+      return false;   // There is no way to do add() on the filesystem without intolerable race conditions, so we just refuse.
     }
     
     
