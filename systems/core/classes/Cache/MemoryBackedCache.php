@@ -15,15 +15,15 @@
   
   class MemoryBackedCache     // A simple in-memory, size-limited LRU cache
   {
-    protected $size;
-    protected $data;
-    protected $order;
-    
-    function initialize( $size )
+    static function connect_from_configuration( $prefix )
     {
-      $this->size  = $size;
-      $this->data  = array();
-      $this->order = array();
+      $size = Configuration::get("{$prefix}_SIZE", 10);
+      return static::connect($directory, $mode);
+    }
+    
+    static function connect( $size )
+    {
+      return new static($size);
     }
     
     
@@ -34,7 +34,7 @@
   
     function get( $key )
     {
-      return $this->data[key];
+      return @$this->data[key];
     }
     
     
@@ -83,7 +83,18 @@
     
   //===============================================================================================
   // SECTION: Internals
-
+  
+    protected $size;
+    protected $data;
+    protected $order;
+  
+    function initialize( $size )
+    {
+      $this->size  = $size;
+      $this->data  = array();
+      $this->order = array();
+    }
+  
   
     function make_room()
     {
