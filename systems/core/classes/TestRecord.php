@@ -160,7 +160,7 @@
           }
           catch( Exception $e )
           {
-            $class_tester->skip($e);
+            $class_tester->fail("test configuration failed", $e);
           }
         }
         
@@ -185,6 +185,22 @@
 
               $class_tester->record($method_name, $method_tester);
             }
+          }
+        }
+        else
+        {
+          $class_tester->skip("test configuration failed");
+        }
+        
+        if( $class_object->hasMethod("tear_down") )
+        {
+          try
+          {
+            $instance->tear_down($configuration, $class_tester);
+          }
+          catch( Exception $e )
+          {
+            // ignore it
           }
         }
         

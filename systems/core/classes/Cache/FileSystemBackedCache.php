@@ -15,11 +15,33 @@
   
   class FileSystemBackedCache     // A simple, filesystem-based cache
   {
-    protected $directory;
-    
-    function __construct( $directory = "/tmp" )
+    static function connect_from_configuration( $prefix )
     {
-      $this->directory = $directory;
+      $system    = Script::get_system_name();
+      $directory = Configuration::get("{$prefix}_DIRECTORY"    , $system ? "/tmp/$system" : "/tmp");
+      $mode      = Configuration::get("{$prefix}_CREATE_MODE"  , "777");
+      
+      if( $mode )
+      {
+        $mode = octdec($mode);
+      }
+      
+      return static::connect($directory, $mode);
+    }
+    
+    static function connect( $directory, $mode = 0 )
+    {
+      if( $mode && !file_exists($directory) )
+      {
+        @mkdir($directory, $mode, $recursive = true);
+      }
+      
+      if( file_exists($directory) )
+      {
+        return new static($directory);
+      }
+      
+      return null;
     }
     
     
@@ -61,6 +83,7 @@
       $serialized = serialize($entry);
 
       file_put_contents($path, $serialized);
+      
       return true;
     }
 
@@ -93,6 +116,14 @@
   //===============================================================================================
   // SECTION: Internals
 
+
+    protected $directory;
+    
+    function __construct( $directory )
+    {
+      $this->directory = $directory;
+    }
+    
   
     function make_path( $key )
     {
@@ -102,6 +133,7 @@
       
       return sprintf("%s/%s", $this->directory, $key);
     }
+  
   }
 
 
