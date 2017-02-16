@@ -140,7 +140,6 @@
         }
       }
     
-      $signal = 
       static::enable_all($on);
       static::disable_all($off);
     }
